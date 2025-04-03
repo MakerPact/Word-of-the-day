@@ -22,7 +22,7 @@ def create_commit(message):
 # Function to set the commit date
 def set_commit_date(commit_date):
     date_str = commit_date.strftime('%Y-%m-%d %H:%M:%S')
-    subprocess.run(['git', 'commit', '--amend', '--no-edit', '--date', date_str])
+    subprocess.run(['git', 'commit', '--amend', '--no-edit', '--date', date_str, '--allow-empty'])
 
 # Function to append a word to the CSV file
 def append_to_csv(word, csv_file="words.csv"):
