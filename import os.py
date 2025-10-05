@@ -33,7 +33,7 @@ def append_to_csv(word, csv_file="words.csv"):
 # Main function to generate commits
 def generate_commits(num_commits=4, csv_file="words.csv"):
     # Start date is 4 years ago
-    start_date = datetime.now() - timedelta(days=4*365)
+    start_date = datetime.now() - timedelta(days=1*365)
     
     # Fetch real words
     words = fetch_real_words(num_commits)
