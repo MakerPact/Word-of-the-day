@@ -32,8 +32,8 @@ def append_to_csv(word, csv_file="words.csv"):
 
 # Main function to generate commits
 def generate_commits(num_commits=4, csv_file="words.csv"):
-    # Start date is 1 year ago
-    start_date = datetime.now() - timedelta(days=365)
+    # Start date is 8 months ago
+    start_date = datetime.now() - timedelta(days=8*30)
     
     # Fetch words in batches (API typically limits to ~100-500 words per request)
     batch_size = 100
