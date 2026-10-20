@@ -7,12 +7,21 @@ import requests
 
 # Function to fetch a list of real words
 def fetch_real_words(num_words=4):
-    # Using an online word list API or a static word list
-    response = requests.get("https://random-word-api.herokuapp.com/word?number=" + str(num_words))
-    if response.status_code == 200:
-        return response.json()
-    else:
-        print("Failed to fetch words. Ensure you have an internet connection.")
+    # Try online API first
+    try:
+        response = requests.get("https://random-word-api.herokuapp.com/word?number=" + str(num_words))
+        if response.status_code == 200:
+            return response.json()
+    except:
+        pass
+    
+    # Fallback to local word list
+    try:
+        with open("local_words.txt", "r") as f:
+            all_local = [line.strip() for line in f if line.strip()]
+        return random.sample(all_local, min(num_words, len(all_local)))
+    except FileNotFoundError:
+        print("No word source available. Ensure you have internet or local_words.txt.")
         exit(1)
 
 # Function to create a commit with a given message and date
@@ -32,8 +41,10 @@ def append_to_csv(word, csv_file="words.csv"):
 
 # Main function to generate commits
 def generate_commits(num_commits=4, csv_file="words.csv"):
-    # Start date is 8 months ago
-    start_date = datetime.now() - timedelta(days=8*30)
+    # End date is today
+    end_date = datetime.now()
+    # Start date is 1 year ago
+    start_date = end_date - timedelta(days=365)
     
     # Fetch words in batches (API typically limits to ~100-500 words per request)
     batch_size = 100
@@ -48,7 +59,7 @@ def generate_commits(num_commits=4, csv_file="words.csv"):
     
     print(f"Creating {num_commits} commits...")
     for idx, word in enumerate(all_words, 1):
-        # Generate a random date within the last year
+        # Generate a random date from 1 year ago to today
         random_days = random.randint(0, 365)
         commit_date = start_date + timedelta(days=random_days)
         
