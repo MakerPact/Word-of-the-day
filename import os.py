@@ -3,7 +3,10 @@ import random
 import subprocess
 import csv
 from datetime import datetime, timedelta
-import requests
+try:
+    import requests
+except ImportError:
+    requests = None
 
 # Function to fetch a list of real words
 def fetch_real_words(num_words=4):
@@ -27,11 +30,7 @@ def fetch_real_words(num_words=4):
 # Function to create a commit with a given message and date
 def create_commit_with_date(message, commit_date):
     date_str = commit_date.strftime('%Y-%m-%d %H:%M:%S')
-    # Set environment variables for commit date
-    env = os.environ.copy()
-    env['GIT_AUTHOR_DATE'] = date_str
-    env['GIT_COMMITTER_DATE'] = date_str
-    subprocess.run(['git', 'commit', '--allow-empty', '-m', message], env=env)
+    subprocess.run(['git', 'commit', '--allow-empty', '-m', message, '--date=' + date_str, '--date=' + date_str])
 
 # Function to append a word to the CSV file
 def append_to_csv(word, csv_file="words.csv"):
@@ -43,8 +42,8 @@ def append_to_csv(word, csv_file="words.csv"):
 def generate_commits(num_commits=4, csv_file="words.csv"):
     # End date is today
     end_date = datetime.now()
-    # Start date is 1 year ago
-    start_date = end_date - timedelta(days=365)
+    # Start date is 9 months ago
+    start_date = end_date - timedelta(days=274)
     
     # Fetch words in batches (API typically limits to ~100-500 words per request)
     batch_size = 100
@@ -85,8 +84,8 @@ if __name__ == "__main__":
     if not os.path.exists('.git/refs/heads/main') and not os.path.exists('.git/refs/heads/master'):
         subprocess.run(['git', 'commit', '--allow-empty', '-m', 'Initial commit'])
     
-    # Generate the commits (1000 commits)
+    # Generate 1000 new commits over the last 9 months
     generate_commits(num_commits=1000)
     
     # Push all commits at the end with upstream tracking
-    subprocess.run(['git', 'push', '--set-upstream', 'origin', 'master'])
+    subprocess.run(['git', 'push', 'origin', 'main'])
